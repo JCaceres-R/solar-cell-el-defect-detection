@@ -23,3 +23,9 @@ Thumbs.db
 desktop.ini
 .vscode/
 .idea/
+
+# LaTeX
+*.aux
+*.log
+*.out
+*.synctex.gz
