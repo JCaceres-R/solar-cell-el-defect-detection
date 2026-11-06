@@ -1,0 +1,25 @@
+# Entornos y cachés
+.venv/
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Datos pesados / derivados (se regeneran con los scripts; las imágenes vienen de `pip install elpv-dataset`)
+data/raw/
+data/interim/
+*.npy
+*.npz
+*.h5
+*.pt
+*.pth
+*.onnx
+*.hef
+models/
+
+# Sistema operativo / OneDrive / editores
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/

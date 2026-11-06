@@ -1,0 +1,5 @@
+# Solo para la fase 4 (scripts/04_entrenar_cnn.py), en la máquina con GPU o en Colab.
+# Instalar torch según la GPU/CUDA de esa máquina: https://pytorch.org/get-started/locally/
+-r requirements.txt
+torch
+torchvision
