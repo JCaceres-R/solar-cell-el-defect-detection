@@ -1,4 +1,6 @@
-# Detección de celdas solares defectuosas en imágenes de electroluminiscencia
+# solar-cell-el-defect-detection
+
+**Detección de celdas solares defectuosas en imágenes de electroluminiscencia (EL)**
 
 Proyecto final · Procesamiento Digital de Imágenes · 2026-2
 
@@ -63,7 +65,7 @@ El procesamiento de imagen hace el trabajo pesado; la red es la última etapa. D
 Requiere Python 3.13 (probado con 3.13.14).
 
 ```bash
-git clone <url-del-repo> && cd proyecto-final-pdi-celdas-el
+git clone https://github.com/<usuario>/solar-cell-el-defect-detection.git && cd solar-cell-el-defect-detection
 python -m venv .venv
 # Windows: .venv\Scripts\activate     ·     Linux/Mac: source .venv/bin/activate
 pip install -r requirements.txt        # instala también el dataset (~93 MB)
