@@ -22,10 +22,14 @@ El procesamiento de imagen hace el trabajo pesado; la red es la última etapa. D
 |---|---|
 | F0 · Repositorio, entorno, dataset | ✅ |
 | F1 · EDA y partición train/val/test por panel | ✅ congelada en `data/particion.csv` |
-| F2 · Preprocesamiento (máscara, normalización, busbars, dedos) | 🟡 línea base portada (`src/preproc.py`); faltan mejoras |
-| F3 · Mapa de defectos + características | 🟡 línea base portada; falta volver a medirla sobre la partición nueva |
-| F4 · CNN | ⬜ plantilla lista (`scripts/04_entrenar_cnn.py`), sin entrenar |
+| F2 · Preprocesamiento (máscara, normalización, busbars, dedos) | 🟡 máscara v1 y normalización medidas (semana 1); busbars y dedos en la semana 2 |
+| F3 · Mapa de defectos + características | 🟡 línea base medida en validación: AUC 0,78 (mono 0,84 · poly 0,71) |
+| F4 · CNN | ⬜ plantilla lista (`scripts/04_entrenar_cnn.py`); GPU probada (GTX 1650, ~7 s/época) |
 | F5 · Evaluación en test, errores, informe, demo | ⬜ |
+
+- Propuesta aprobada: [`Informe_Propuesta_Celdas_EL.pdf`](Informe_Propuesta_Celdas_EL.pdf).
+- Plan por semanas y formato de los avances: [`docs/plan_semanal.md`](docs/plan_semanal.md) · hoja de ruta visual: [`docs/Hoja_de_ruta_Celdas_EL.pdf`](docs/Hoja_de_ruta_Celdas_EL.pdf).
+- Avances entregados: [`entregas/`](entregas/) (informe y presentación de cada semana).
 
 ## Estructura
 
@@ -39,18 +43,25 @@ El procesamiento de imagen hace el trabajo pesado; la red es la última etapa. D
 ├── docs/
 │   ├── 01_dataset.md          ficha del dataset: origen, licencia, etiquetas, paneles, calidad, diccionario
 │   ├── 02_eda.md              hallazgos del EDA → decisiones
-│   └── 03_particion.md        método de partición, resultado y verificación de fuga
+│   ├── 03_particion.md        método de partición, resultado y verificación de fuga
+│   ├── plan_semanal.md        plan de 5 semanas y formato de los avances
+│   ├── hoja_de_ruta/          fuente HTML de la hoja de ruta (→ Hoja_de_ruta_Celdas_EL.pdf)
+│   └── propuesta/             diapositivas de la propuesta y su fuente Beamer
+├── entregas/
+│   ├── comun/                 logos y portada compartidos
+│   └── avance_N/              informe.tex/.pdf (XeLaTeX) y presentacion.tex/.pdf (Beamer) de cada semana
 ├── notebooks/
 │   └── 01_EDA.ipynb           análisis exploratorio completo (ejecutado, con salidas)
 ├── reports/
-│   ├── figures/               e* = EDA · p* = partición · f* = pipeline
+│   ├── figures/               e* = EDA · p* = partición · f* = pipeline · n* = máscara y normalización
 │   └── metricas/              (se crea al evaluar) JSON con métricas
 ├── scripts/                   se corren en orden desde la raíz del repo
 │   ├── 00_crear_particion.py      metadatos + partición + figuras p*
 │   ├── 01_preprocesar_todo.py     pipeline sobre todas las celdas → data/interim/
 │   ├── 02_evaluar_caracteristicas.py  AUC por característica + logística (train → val)
 │   ├── 03_figuras_pipeline.py     figura paso a paso + errores en val
-│   └── 04_entrenar_cnn.py         CNN (en máquina con GPU / Colab)
+│   ├── 04_entrenar_cnn.py         CNN (en máquina con GPU / Colab)
+│   └── 05_medir_mascara_normalizacion.py  semana 1: máscara v1, normalización y atajo de exposición (figuras n*)
 ├── src/
 │   ├── datos.py               carga, metadatos, reconstrucción de paneles, gemelos
 │   ├── particion.py           partición por grupos, similitud entre celdas/paneles, fuga
@@ -62,7 +73,7 @@ El procesamiento de imagen hace el trabajo pesado; la red es la última etapa. D
 
 ## Cómo reproducir
 
-Requiere Python 3.13 (probado con 3.13.14).
+Requiere Python 3.13 o 3.14 (probado con 3.13.14 y 3.14.7).
 
 ```bash
 git clone https://github.com/<usuario>/solar-cell-el-defect-detection.git && cd solar-cell-el-defect-detection
@@ -75,12 +86,14 @@ python -m nbconvert --to notebook --execute --inplace notebooks/01_EDA.ipynb   #
 python scripts/01_preprocesar_todo.py  # ~3-5 min · LIMITE=40 para una prueba rápida
 python scripts/02_evaluar_caracteristicas.py
 python scripts/03_figuras_pipeline.py
+python scripts/05_medir_mascara_normalizacion.py   # ~1 min · solo train y val
 ```
 
 Fase 4, en la máquina con GPU o en Colab:
 
 ```bash
 pip install -r requirements-cnn.txt    # instalar torch según la CUDA de esa máquina
+# probado: pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130  (GTX 1650, Windows)
 python scripts/01_preprocesar_todo.py  # data/interim/ no se versiona: hay que generarlo allí
 python scripts/04_entrenar_cnn.py pre 0
 ```

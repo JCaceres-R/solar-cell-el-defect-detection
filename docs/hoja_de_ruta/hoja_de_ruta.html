@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Hoja de ruta · Celdas EL</title>
+<style>
+  @page { size: 297mm 210mm; margin: 0; }
+  :root {
+    --ud: #80393d; --ud2: #a3585c; --udsoft: #f2e6e7; --udline: #e2c9cb;
+    --ink: #262626; --ink2: #555; --muted: #8a8a8a; --line: #dedbd6; --paper: #fbfaf8; --card: #ffffff;
+    --mono: #2a78d6; --poly: #eb6834;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #fff; }
+  body { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; color: var(--ink); font-size: 11pt; line-height: 1.38;
+         -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width: 297mm; height: 210mm; position: relative; overflow: hidden; page-break-after: always; background: var(--paper);
+          padding: 13mm 15mm 11mm 15mm; display: flex; flex-direction: column; }
+  .page:last-child { page-break-after: auto; }
+  h1, h2, h3, .serif { font-family: Georgia, "Times New Roman", serif; }
+  h2 { font-size: 23pt; color: var(--ud); font-weight: normal; line-height: 1.1; }
+  h3 { font-size: 13pt; color: var(--ud); font-weight: normal; margin-bottom: 2mm; }
+  .kicker { font-size: 8.5pt; letter-spacing: .14em; text-transform: uppercase; color: var(--ud2); font-weight: 600; margin-bottom: 1.5mm; }
+  .lead { font-size: 11.5pt; color: var(--ink2); max-width: 205mm; margin-top: 2.5mm; }
+  .head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6mm; }
+  .head img { height: 13mm; opacity: .9; }
+  .foot { position: absolute; left: 15mm; right: 15mm; bottom: 6mm; display: flex; justify-content: space-between;
+          font-size: 7.5pt; color: var(--muted); border-top: 0.3mm solid var(--line); padding-top: 1.5mm; }
+  .card { background: var(--card); border: 0.3mm solid var(--line); border-radius: 2mm; padding: 4.5mm 5mm; }
+  .chip { display: inline-block; font-size: 7.8pt; padding: .3mm 2mm; border-radius: 5mm; border: 0.3mm solid var(--udline);
+          color: var(--ud); background: var(--udsoft); margin: 0 1mm 1mm 0; font-family: Consolas, monospace; }
+  .muted { color: var(--muted); }
+  b, strong { font-weight: 600; }
+  code { font-family: Consolas, monospace; font-size: 9pt; background: #f1eeea; padding: 0 1mm; border-radius: 1mm; }
+
+  /* estados */
+  .st { display: inline-block; width: 3.4mm; height: 3.4mm; border-radius: 50%; vertical-align: -0.5mm; margin-right: 1.6mm; flex: none; }
+  .st.ok   { background: var(--ud); }
+  .st.base { background: repeating-linear-gradient(135deg, var(--ud) 0 0.6mm, #fff 0.6mm 1.3mm); border: 0.3mm solid var(--ud); }
+  .st.no   { background: #fff; border: 0.4mm solid #b5b0aa; }
+  .legend { font-size: 8.5pt; color: var(--ink2); display: flex; gap: 6mm; }
+
+  /* ---------- portada ---------- */
+  .cover { background: var(--ud); color: #fff; padding: 0; flex-direction: row; }
+  .cover .left { width: 160mm; padding: 16mm 0 14mm 17mm; display: flex; flex-direction: column; }
+  .cover .left img.logo { height: 15mm; align-self: flex-start; }
+  .cover h1 { font-size: 46pt; font-weight: normal; line-height: 1; margin-top: 20mm; }
+  .cover .sub { font-size: 15pt; font-family: Georgia, serif; margin-top: 5mm; color: #f3dfe0; line-height: 1.3; }
+  .cover .what { margin-top: 9mm; font-size: 10.5pt; color: #f3dfe0; max-width: 128mm; }
+  .cover .team { margin-top: auto; font-size: 9.5pt; color: #f3dfe0; }
+  .cover .team b { color: #fff; font-weight: 600; }
+  .cover .right { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2.5mm; padding: 14mm 14mm 14mm 0; }
+  .cover .cell { position: relative; border-radius: 1.5mm; overflow: hidden; }
+  .cover .cell img { width: 100%; height: 100%; object-fit: cover; display: block; filter: contrast(1.05); }
+  .cover .cell span { position: absolute; left: 2mm; bottom: 2mm; font-size: 8pt; background: rgba(0,0,0,.62); padding: .5mm 2mm; border-radius: 1mm; }
+  .cover .weeks { display: flex; gap: 1.6mm; margin-top: 8mm; }
+  .cover .weeks div { flex: 1; border-top: 1mm solid rgba(255,255,255,.35); padding-top: 1.5mm; font-size: 8pt; color: #f3dfe0; }
+  .cover .weeks div.now { border-top-color: #fff; color: #fff; }
+
+  /* ---------- pipeline ---------- */
+  .pipe { display: flex; align-items: stretch; gap: 0; margin-top: 2mm; }
+  .blk { flex: 1; position: relative; background: var(--card); border: 0.35mm solid var(--line); border-radius: 2mm; padding: 3mm 2.6mm 3mm;
+         display: flex; flex-direction: column; min-height: 64mm; }
+  .blk + .arrow { }
+  .arrow { width: 4.5mm; flex: none; display: flex; align-items: center; justify-content: center; color: #b5b0aa; font-size: 12pt; }
+  .blk .n { font-size: 7.5pt; color: var(--muted); letter-spacing: .08em; }
+  .blk .t { font-family: Georgia, serif; font-size: 12pt; color: var(--ink); line-height: 1.15; margin: 1mm 0 1.8mm; }
+  .blk .d { font-size: 9pt; color: var(--ink2); line-height: 1.32; }
+  .blk .wk { margin-top: auto; padding-top: 2mm; font-size: 7.8pt; display: flex; align-items: center; color: var(--ink2); }
+  .blk.split { padding: 0; border: none; background: none; gap: 1.5mm; }
+  .blk.split > div { flex: 1; background: var(--card); border: 0.35mm solid var(--line); border-radius: 2mm; padding: 2.4mm 2.6mm; display: flex; flex-direction: column; }
+  .blk.cmp > div { border-color: var(--ud); border-style: dashed; }
+  .blk.net { border-color: var(--ink); border-width: 0.5mm; }
+  .tag { position: absolute; top: -3mm; left: 2.5mm; font-size: 6.8pt; background: var(--ud); color: #fff; padding: .2mm 1.6mm; border-radius: 1mm; letter-spacing: .04em; }
+  .outs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; margin-top: 9mm; }
+  .outs b { font-size: 12pt; }
+  .outs .card { display: flex; gap: 4mm; align-items: flex-start; }
+  .outs .num { font-family: Georgia, serif; font-size: 26pt; color: var(--ud); line-height: .9; }
+
+  /* ---------- hoy ---------- */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3.5mm; }
+  .stat .v { font-family: Georgia, serif; font-size: 25pt; color: var(--ud); line-height: 1; }
+  .stat .l { font-size: 8.5pt; color: var(--ink2); margin-top: 1.5mm; line-height: 1.3; }
+  .figbox { background: #fff; border: 0.3mm solid var(--line); border-radius: 2mm; padding: 2.5mm; }
+  .figbox img { width: 100%; display: block; }
+  .cap { font-size: 8.3pt; color: var(--ink2); margin-top: 1.5mm; }
+  .note { display: flex; gap: 2.5mm; font-size: 8.8pt; margin-bottom: 2.2mm; line-height: 1.32; }
+  .note .k { flex: none; width: 5mm; height: 5mm; border-radius: 50%; background: var(--ud); color: #fff; font-size: 7.5pt; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+
+  /* ---------- gantt ---------- */
+  .gantt { display: grid; grid-template-columns: 44mm repeat(5, 1fr); border-top: 0.3mm solid var(--line); margin-top: 1mm; position: relative; }
+  .gantt .wh { padding: 2.2mm 2mm 2mm; border-left: 0.3mm solid var(--line); }
+  .gantt .wh .w { font-family: Georgia, serif; font-size: 13pt; color: var(--ud); }
+  .gantt .wh .dt { font-size: 7.8pt; color: var(--muted); }
+  .gantt .wh .q { font-size: 9.2pt; color: var(--ink); margin-top: 1mm; line-height: 1.25; min-height: 9mm; }
+  .gantt .lane { padding: 2.6mm 2mm 2.6mm 0; border-top: 0.3mm solid var(--line); font-size: 10pt; font-weight: 600; color: var(--ink); line-height: 1.2; }
+  .gantt .lane small { display: block; font-weight: normal; color: var(--muted); font-size: 8pt; margin-top: .6mm; }
+  .gantt .slot { border-top: 0.3mm solid var(--line); border-left: 0.3mm solid var(--line); padding: 1.9mm 2.2mm; position: relative; }
+  .bar { border-radius: 1.4mm; padding: 1.6mm 2.2mm; font-size: 8.9pt; line-height: 1.25; color: #fff; background: var(--ud); }
+  .bar.base { background: repeating-linear-gradient(135deg, #fff 0 1.2mm, var(--udsoft) 1.2mm 2.4mm); color: var(--ud); border: 0.35mm solid var(--ud); }
+  .bar.todo { background: #fff; color: var(--ink); border: 0.35mm solid #b5b0aa; }
+  .bar.key  { background: #fff; color: var(--ud); border: 0.5mm solid var(--ud); font-weight: 600; }
+  .span2 { grid-column: span 2; }
+  .miles { display: grid; grid-template-columns: 44mm repeat(5, 1fr); margin-top: 0; }
+  .mile { border-left: 0.3mm solid var(--line); padding: 2mm 1.5mm 0; text-align: right; }
+  .mile span { display: inline-block; background: var(--ud); color: #fff; font-size: 7.8pt; padding: .6mm 2.2mm; border-radius: 1mm; font-weight: 600; }
+  .mile.fin span { background: var(--ink); }
+  .today { position: absolute; top: 0; bottom: 0; width: 0; border-left: 0.6mm dashed var(--ud); }
+  .today span { position: absolute; top: -4.6mm; left: -6mm; font-size: 7pt; color: #fff; background: var(--ud); padding: .3mm 1.5mm; border-radius: 1mm; white-space: nowrap; font-weight: 600; }
+
+  /* ---------- semanas ---------- */
+  .wk2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; flex: 1; }
+  .week { display: flex; flex-direction: column; }
+  .week .top { display: flex; align-items: baseline; gap: 3mm; border-bottom: 0.6mm solid var(--ud); padding-bottom: 1.6mm; margin-bottom: 3mm; }
+  .week .top .big { font-family: Georgia, serif; font-size: 34pt; color: var(--ud); line-height: .85; }
+  .week .top .tt { font-family: Georgia, serif; font-size: 14.5pt; line-height: 1.1; }
+  .week .top .dt { font-size: 8pt; color: var(--muted); }
+  .q { font-family: Georgia, serif; font-style: italic; font-size: 10.5pt; color: var(--ud); margin-bottom: 3mm; }
+  .tasks { list-style: none; margin-bottom: 3mm; }
+  .tasks li { display: block; position: relative; padding-left: 5.4mm; font-size: 10pt; line-height: 1.32; margin-bottom: 1.9mm; }
+  .tasks li .st { position: absolute; left: 0; top: .9mm; margin: 0; }
+  .tasks li.hot { background: var(--udsoft); margin-left: -2mm; padding: 1.1mm 2mm 1.1mm 7.4mm; border-radius: 1mm; }
+  .tasks li.hot .st { left: 2mm; top: 2mm; }
+  .blocks2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-top: 3mm; }
+  .mini { background: #fff; border: 0.3mm solid var(--line); border-radius: 1.6mm; padding: 2.8mm 3.2mm; font-size: 9.5pt; line-height: 1.33; }
+  .demo { display: grid; grid-template-columns: 30mm 1fr 42mm; gap: 2.5mm; align-items: stretch; margin-top: 1mm; }
+  .demo img { width: 100%; border-radius: 1mm; display: block; }
+  .demo .lbl { font-size: 7.3pt; color: var(--muted); margin-bottom: .8mm; letter-spacing: .06em; text-transform: uppercase; }
+  .demo .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2mm; }
+  .demo .tiles div { background: #ebe7e2; border-radius: 1mm; font-size: 8pt; display: flex; align-items: center; justify-content: center; color: var(--ink2); min-height: 13mm; }
+  .demo .res { border: 0.45mm solid var(--ud); border-radius: 1.2mm; padding: 2.2mm 2.6mm; font-size: 9pt; line-height: 1.45; }
+  .demo .res .v { font-family: Georgia, serif; color: var(--ud); font-size: 12.5pt; }
+  .mini .h { font-size: 7.3pt; letter-spacing: .12em; text-transform: uppercase; color: var(--ud2); font-weight: 600; margin-bottom: 1.2mm; }
+  .formula { font-family: Georgia, serif; font-size: 10.5pt; text-align: center; padding: 1.8mm 0; color: var(--ink); }
+
+  /* comparación A/B */
+  .ab { display: grid; grid-template-columns: 1fr auto 1fr; gap: 2mm; align-items: stretch; margin-bottom: 3mm; }
+  .ab .vs { font-family: Georgia, serif; color: var(--muted); align-self: center; font-style: italic; }
+  .ab .mini { border-color: var(--ud); border-style: dashed; }
+  table.crit { width: 100%; border-collapse: collapse; font-size: 8.4pt; }
+  table.crit td, table.crit th { text-align: left; padding: .9mm 1.5mm; border-bottom: 0.3mm solid var(--line); vertical-align: top; }
+  table.crit th { font-size: 7.3pt; letter-spacing: .1em; text-transform: uppercase; color: var(--ud2); font-weight: 600; }
+  table.crit td:first-child { color: var(--ud); font-family: Georgia, serif; width: 5mm; }
+  table.crit .w { color: var(--muted); white-space: nowrap; }
+
+  /* matriz de experimentos */
+  .exp { display: grid; grid-template-columns: 30mm repeat(3, 1fr); gap: 1.2mm; font-size: 8.5pt; }
+  .exp div { padding: 1.6mm 2mm; border-radius: 1mm; }
+  .exp .h { font-size: 7.3pt; letter-spacing: .08em; text-transform: uppercase; color: var(--ud2); font-weight: 600; padding-bottom: .4mm; }
+  .exp .r { color: var(--ink); font-weight: 600; background: none; }
+  .exp .c { background: var(--udsoft); color: var(--ud); text-align: center; font-family: Consolas, monospace; font-size: 8pt; }
+  .chan { display: flex; gap: 2mm; align-items: center; margin: 1mm 0 2.5mm; }
+  .chan .ly { flex: 1; border: 0.35mm solid var(--ink); border-radius: 1mm; padding: 1.4mm 2mm; font-size: 8pt; background: #fff; }
+  .chan .ly:nth-child(2) { transform: translateY(-1mm); } .chan .ly:nth-child(3) { transform: translateY(-2mm); }
+
+  /* candado prueba */
+  .lock { display: flex; gap: 4mm; align-items: center; background: var(--ink); color: #fff; border-radius: 2mm; padding: 3.5mm 4.5mm; margin-bottom: 3mm; }
+  .lock svg { flex: none; }
+  .lock .t { font-family: Georgia, serif; font-size: 12pt; }
+  .lock .d { font-size: 8.5pt; color: #ddd; }
+
+  /* cómo trabajamos */
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 1mm; }
+  .step { position: relative; padding: 3.5mm 6mm 3.5mm 4mm; background: #fff; border: 0.3mm solid var(--line); border-right: none; }
+  .step:first-child { border-radius: 2mm 0 0 2mm; } .step:last-child { border-radius: 0 2mm 2mm 0; border-right: 0.3mm solid var(--line); }
+  .step .n { font-family: Georgia, serif; font-size: 20pt; color: var(--ud); line-height: 1; }
+  .step .t { font-weight: 600; font-size: 9.5pt; margin: 1mm 0 .8mm; }
+  .step .d { font-size: 9.3pt; color: var(--ink2); line-height: 1.32; }
+  .sec7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1.4mm; }
+  .sec7 div { background: #fff; border: 0.3mm solid var(--line); border-top: 1mm solid var(--ud); border-radius: 1mm; padding: 2.4mm; font-size: 9.2pt; line-height: 1.28; }
+  .sec7 b { display: block; font-family: Georgia, serif; font-weight: normal; color: var(--ud); font-size: 12pt; }
+  .rules { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3.5mm; }
+  .rules .mini { font-size: 10pt; line-height: 1.5; }
+  .roles { width: 100%; border-collapse: collapse; font-size: 9.8pt; }
+  .roles td { padding: 2.6mm 2mm; border-bottom: 0.3mm solid var(--line); }
+  .roles td.who { width: 33mm; border-bottom: 0.3mm dashed #b5b0aa; color: var(--muted); font-style: italic; }
+</style>
+</head>
+<body>
+
+<!-- =============================================================== 1 · PORTADA -->
+<section class="page cover">
+  <div class="left">
+    <img class="logo" src="img/logo_blanco.png" alt="">
+    <h1>Hoja de ruta</h1>
+    <div class="sub">Detección de celdas solares defectuosas<br>en imágenes de electroluminiscencia</div>
+    <div class="what">
+      Lo que vamos a construir, dónde estamos y qué le toca a cada semana para llegar a la sustentación.
+      Sale del informe de propuesta que aprobó el profe, sin cambiar el alcance.
+    </div>
+    <div class="weeks">
+      <div>S1 · datos ✓</div><div class="now">S2 · busbars</div><div>S3 · mapa + CNN</div><div>S4 · prueba + demo</div><div>S5 · cierre</div>
+    </div>
+    <div class="team">
+      <b>Joel Eduardo Reyes Barrios</b> · <b>Johan Sebastián Cáceres Rodríguez</b> · <b>Hosman Javier Nieto Cruz</b><br>
+      Procesamiento Digital de Imágenes · Universidad Distrital · 15 de noviembre de 2026
+    </div>
+  </div>
+  <div class="right">
+    <div class="cell"><img src="img/celda_sana.png" alt=""><span>sana</span></div>
+    <div class="cell"><img src="img/celda_grieta.png" alt=""><span>grieta</span></div>
+    <div class="cell"><img src="img/celda_apagada.png" alt=""><span>zona apagada</span></div>
+    <div class="cell"><img src="img/celda_poly.png" alt=""><span>poly: granos que engañan</span></div>
+  </div>
+</section>
+
+<!-- =============================================================== 2 · EL SISTEMA -->
+<section class="page">
+  <div class="head">
+    <div>
+      <div class="kicker">01 · El sistema en una página</div>
+      <h2>Una celda entra, salen tres cosas</h2>
+      <p class="lead">Casi todo es procesamiento clásico, con temas del curso. La red es solo la última etapa. Cada bloque dice en qué semana se trabaja y cómo está hoy.</p>
+    </div>
+    <img src="img/logo.png" alt="">
+  </div>
+
+  <div class="legend" style="margin-bottom:5mm">
+    <span><span class="st ok"></span>hecho (v1 medida)</span>
+    <span><span class="st base"></span>hay línea base, falta mejorarla</span>
+    <span><span class="st no"></span>no empezado</span>
+  </div>
+
+  <div class="pipe">
+    <div class="blk">
+      <div class="n">ENTRADA</div><div class="t">Celda EL</div>
+      <div class="d">300 × 300 px, gris de 8 bits, ya recortada. Su tipo: mono o poly.</div>
+      <div class="wk"><span class="st ok"></span>S1</div>
+    </div>
+    <div class="arrow">›</div>
+    <div class="blk">
+      <div class="n">1 · BINARIAS</div><div class="t">Máscara</div>
+      <div class="d">Umbral, envolvente convexa y erosión. Quita bordes y esquinas.</div>
+      <div class="wk"><span class="st ok"></span>S1</div>
+    </div>
+    <div class="arrow">›</div>
+    <div class="blk">
+      <div class="n">2 · POR PÍXEL</div><div class="t">Normalización</div>
+      <div class="d">Dividir por el percentil 90 de la celda: lo sano queda ≈ 1.</div>
+      <div class="wk"><span class="st ok"></span>S1</div>
+    </div>
+    <div class="arrow">›</div>
+    <div class="blk split cmp" style="flex:1.35">
+      <span class="tag">SE COMPARAN</span>
+      <div><div class="n">3A · FOURIER</div><div class="t">Notch</div><div class="d">Atenuar los picos del eje vertical del espectro.</div><div class="wk"><span class="st no"></span>S2</div></div>
+      <div><div class="n">3B · MORFOLOGÍA</div><div class="t">Cierre</div><div class="d">Rellenar la banda oscura solo en filas de busbar.</div><div class="wk"><span class="st base"></span>S2</div></div>
+    </div>
+    <div class="arrow">›</div>
+    <div class="blk">
+      <div class="n">4 · MORFOLOGÍA</div><div class="t">Dedos</div>
+      <div class="d">Cierre horizontal corto. Ojo con las grietas verticales finas.</div>
+      <div class="wk"><span class="st base"></span>S2</div>
+    </div>
+    <div class="arrow">›</div>
+    <div class="blk">
+      <div class="n">5 · FILTRADO</div><div class="t">Realce</div>
+      <div class="d">Sato (Hessiana) para grietas. Déficit de brillo para zonas apagadas.</div>
+      <div class="wk"><span class="st base"></span>S3</div>
+    </div>
+    <div class="arrow">›</div>
+    <div class="blk">
+      <div class="n">6 · DESCRIPCIÓN</div><div class="t">Mapas y medidas</div>
+      <div class="d">Componentes conexas: área, longitud y orientación.</div>
+      <div class="wk"><span class="st base"></span>S3</div>
+    </div>
+    <div class="arrow">›</div>
+    <div class="blk net">
+      <span class="tag" style="background:var(--ink)">ÚNICA RED</span>
+      <div class="n">7 · CLASIFICACIÓN</div><div class="t">CNN pequeña</div>
+      <div class="d">3 canales a 128 × 128: celda limpia, déficit y crestas.</div>
+      <div class="wk"><span class="st no"></span>S3</div>
+    </div>
+  </div>
+
+  <div class="outs">
+    <div class="card"><div class="num">1</div><div><b>Veredicto</b><br><span class="muted" style="font-size:10pt">FUNCIONAL o DEFECTUOSA, con su probabilidad. Umbral de 50 %, el mismo del artículo original.</span></div></div>
+    <div class="card"><div class="num">2</div><div><b>Mapa de defectos</b><br><span class="muted" style="font-size:10pt">Grietas y zonas apagadas superpuestas a la imagen. <b>Apoyo visual:</b> no se mide, porque ELPV no dice dónde está el defecto.</span></div></div>
+    <div class="card"><div class="num">3</div><div><b>Medidas</b><br><span class="muted" style="font-size:10pt">Área apagada y longitud de las grietas. También apoyo visual. <b>Solo el veredicto se evalúa con métricas.</b></span></div></div>
+  </div>
+
+  <div class="foot"><span>Hoja de ruta · Celdas EL</span><span>2</span></div>
+</section>
+
+<!-- =============================================================== 3 · DÓNDE ESTAMOS -->
+<section class="page">
+  <div class="head">
+    <div>
+      <div class="kicker">02 · Dónde estamos hoy</div>
+      <h2>Los datos y la evaluación ya están resueltos</h2>
+      <p class="lead">Lo más delicado del proyecto, partir sin fuga, ya está hecho y congelado en <code>data/particion.csv</code>. Lo que sigue es mejorar el procesamiento sobre una base honesta.</p>
+    </div>
+    <img src="img/logo.png" alt="">
+  </div>
+
+  <div class="stats" style="margin-bottom:5mm">
+    <div class="card stat"><div class="v">2.624</div><div class="l">celdas de <b>44 paneles</b>: 18 mono (1.074) y 26 poly (1.550). 69 % funcionales y 31 % defectuosas.</div></div>
+    <div class="card stat"><div class="v">30 · 7 · 7</div><div class="l">paneles en entrenamiento, validación y prueba. <b>Cada panel va completo</b> a una sola parte.</div></div>
+    <div class="card stat"><div class="v">0 <span style="font-size:13pt;color:var(--muted)">frente a 498</span></div><div class="l">pares casi idénticos (r &gt; 0,95) repartidos entre partes: los nuestros contra una partición al azar.</div></div>
+    <div class="card stat"><div class="v">5</div><div class="l">pares de <b>paneles gemelos</b> (el mismo panel fotografiado dos veces). Van juntos.</div></div>
+  </div>
+
+  <div style="display:grid; grid-template-columns: 1.55fr 1fr; gap: 6mm; flex:1; min-height:0">
+    <div>
+      <div class="figbox"><img src="../../reports/figures/f2_pipeline_pasos.png" alt=""></div>
+      <div class="cap">La línea base de <code>src/preproc.py</code> sobre tres celdas defectuosas (figura <code>f2</code>).</div>
+    </div>
+    <div>
+      <h3>Dónde falla la línea base</h3>
+      <div class="note"><div class="k">1</div><div><b>Fila 1:</b> la mancha oscura grande se toma por busbar, y el cierre la rellena a medias. El busbar debe ser fino y abarcar todo el ancho. <span class="muted">→ S2</span></div></div>
+      <div class="note"><div class="k">2</div><div><b>Fila 2 (mono):</b> funciona. La grieta diagonal y la zona apagada del borde aparecen limpias en el mapa.</div></div>
+      <div class="note"><div class="k">3</div><div><b>Fila 3 (poly):</b> Sato responde a todos los bordes de grano y la grieta se pierde. Hay que filtrar por orientación, longitud y escala, o usar Gabor. <span class="muted">→ S3</span></div></div>
+      <div class="note"><div class="k">4</div><div><b>Medida en S1:</b> con la partición por panel, la línea base da <b>AUC 0,78</b> en validación: 0,84 en mono y 0,71 en poly. Antes, con partición al azar, daba 0,84.</div></div>
+      <div class="mini" style="margin-top:3mm">
+        <div class="h">Referencia de la literatura</div>
+        88,42 % con CNN y 82,44 % con SVM (Deitsch et al., 2019), pero con partición <b>al azar por celda</b>. Con partición por panel la tarea es más difícil: sirve de contexto, no de meta.
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><span>Hoja de ruta · Celdas EL</span><span>3</span></div>
+</section>
+
+<!-- =============================================================== 4 · RUTA -->
+<section class="page">
+  <div class="head">
+    <div>
+      <div class="kicker">03 · La ruta completa</div>
+      <h2>Cinco semanas, cuatro avances y la sustentación</h2>
+      <p class="lead">Cada semana responde una pregunta y cierra con un avance (informe + presentación), que se arma cuando se pide con lo que haya hasta ese momento.</p>
+    </div>
+    <img src="img/logo.png" alt="">
+  </div>
+
+  <div style="position:relative">
+    <div class="gantt">
+      <div></div>
+      <div class="wh"><div class="w">Semana 1</div><div class="dt">9 – 15 nov</div><div class="q">¿Los datos permiten una evaluación honesta?</div></div>
+      <div class="wh"><div class="w">Semana 2</div><div class="dt">16 – 22 nov</div><div class="q">¿Qué quita mejor los busbars: notch o cierre?</div></div>
+      <div class="wh"><div class="w">Semana 3</div><div class="dt">23 – 29 nov</div><div class="q">¿Cuánto aporta el preprocesamiento a la CNN? ¿A o B?</div></div>
+      <div class="wh"><div class="w">Semana 4</div><div class="dt">30 nov – 6 dic</div><div class="q">¿Cuánto acierta en paneles nunca vistos?</div></div>
+      <div class="wh"><div class="w">Semana 5</div><div class="dt">7 – 13 dic</div><div class="q">¿Lo sabemos contar?</div></div>
+
+      <div class="lane">Datos y evaluación<small>dataset, partición, métricas</small></div>
+      <div class="slot"><div class="bar">EDA · 44 paneles · partición congelada · fuga verificada</div></div>
+      <div class="slot"></div>
+      <div class="slot"></div>
+      <div class="slot"><div class="bar key">Medición única en prueba</div></div>
+      <div class="slot"></div>
+
+      <div class="lane">Preprocesamiento<small>máscara, brillo, busbars, dedos</small></div>
+      <div class="slot"><div class="bar">Máscara v1 y normalización, medidas</div></div>
+      <div class="slot"><div class="bar todo">Notch (A) frente a cierre (B) · dedos · criterios 1, 2 y 4</div></div>
+      <div class="slot"></div>
+      <div class="slot"></div>
+      <div class="slot"></div>
+
+      <div class="lane">Mapas<small>grietas y zonas apagadas</small></div>
+      <div class="slot"></div>
+      <div class="slot"><div class="bar todo">Revisar grietas verticales finas al quitar dedos</div></div>
+      <div class="slot"><div class="bar todo">Sato / Gabor · déficit · componentes (apoyo visual)</div></div>
+      <div class="slot"><div class="bar todo">Mapas de los errores</div></div>
+      <div class="slot"></div>
+
+      <div class="lane">Red y demo<small>GPU, CNN, aplicación</small></div>
+      <div class="slot"><div class="bar">GPU lista: GTX 1650, ~7 s/época</div></div>
+      <div class="slot"></div>
+      <div class="slot"><div class="bar todo">CNN con A, B y original × 3 semillas → criterio 3 → <b>congelar</b></div></div>
+      <div class="slot"><div class="bar todo">Demo: etapas, mapa y veredicto</div></div>
+      <div class="slot"></div>
+
+      <div class="lane">Comunicación<small>informe y presentación</small></div>
+      <div class="slot"><div class="bar">Avance 1</div></div>
+      <div class="slot"><div class="bar todo">Avance 2</div></div>
+      <div class="slot"><div class="bar todo">Avance 3</div></div>
+      <div class="slot"><div class="bar todo">Avance 4</div></div>
+      <div class="slot"><div class="bar key">Informe final · presentación · video de la demo</div></div>
+    </div>
+    <div class="miles">
+      <div></div>
+      <div class="mile"><span>Avance 1</span></div>
+      <div class="mile"><span>Avance 2</span></div>
+      <div class="mile"><span>Avance 3 · sistema congelado</span></div>
+      <div class="mile"><span>Avance 4</span></div>
+      <div class="mile fin"><span>Sustentación</span></div>
+    </div>
+    <div class="today" id="hoy" style="left: calc(44mm + (100% - 44mm) / 5)"><span>HOY · 15 nov</span></div>
+  </div>
+
+  <div class="legend" style="margin-top:5mm">
+    <span><span class="st ok"></span>hecho</span>
+    <span><span class="st base"></span>empezado</span>
+    <span><span class="st no"></span>por hacer</span>
+    <span style="margin-left:auto">Las semanas siguen el cronograma del informe de propuesta (tabla 6).</span>
+  </div>
+
+  <div class="foot"><span>Hoja de ruta · Celdas EL</span><span>4</span></div>
+</section>
+
+<!-- =============================================================== 5 · SEMANAS 1 Y 2 -->
+<section class="page">
+  <div class="kicker">04 · Semana a semana</div>
+  <div class="wk2" style="margin-top:2mm">
+    <div class="week">
+      <div class="top"><span class="big">1</span><div><div class="tt">Datos, partición y línea base</div><div class="dt">9 – 15 nov · cierra con el Avance 1</div></div></div>
+      <div class="q">¿Los datos permiten una evaluación honesta?</div>
+      <ul class="tasks">
+        <li><span class="st ok"></span>Dataset, EDA y ficha de datos (<code>docs/01</code>, <code>docs/02</code>)</li>
+        <li><span class="st ok"></span>Reconstrucción de los 44 paneles y de los 5 pares de gemelos</li>
+        <li><span class="st ok"></span>Partición por panel congelada y fuga verificada</li>
+        <li><span class="st ok"></span>Pipeline de línea base portado, con figura paso a paso</li>
+        <li class="hot"><span class="st ok"></span><span><b>Máscara v1</b> (respaldo de plantilla en 17 celdas) y <b>normalización</b>: la variación entre paneles baja de 12 % a 4 %</span></li>
+        <li class="hot"><span class="st ok"></span><span><b>Línea base</b> en validación: AUC 0,78 (mono 0,84 · poly 0,71)</span></li>
+        <li class="hot"><span class="st ok"></span><span><b>GPU</b>: GTX 1650 con <code>torch</code> + CUDA, unos 7 s por época</span></li>
+      </ul>
+      <div class="figbox" style="margin-bottom:3mm"><img src="../../reports/figures/p2_paneles_particion.png" alt=""></div>
+      <div class="blocks2">
+        <div class="mini"><div class="h">Se muestra</div><span class="chip">e2</span><span class="chip">e5</span><span class="chip">p2</span><span class="chip">e10</span><span class="chip">e7</span><span class="chip">e9</span><span class="chip">f2</span><span class="chip">n1</span><span class="chip">n2</span><span class="chip">n3</span><span class="chip">f4</span></div>
+        <div class="mini"><div class="h">Hallazgo</div>Parte de lo que separa el brillo crudo es la exposición del panel: los paneles con más defectos se fotografiaron más oscuros.</div>
+      </div>
+    </div>
+
+    <div class="week">
+      <div class="top"><span class="big">2</span><div><div class="tt">Busbars: notch frente a cierre</div><div class="dt">16 – 22 nov · cierra con el Avance 2</div></div></div>
+      <div class="q">¿Qué quita mejor los busbars sin borrar defectos?</div>
+      <div class="ab">
+        <div class="mini"><div class="h">A · Notch (lab 9)</div>Se detectan los picos del eje vertical y se aplica H(u,v). Dos variantes: <b>A-global</b> y <b>A-filas</b>, para que la comparación con B sea justa.
+          <div class="formula">ℱ⁻¹{ H(u,v) · F(u,v) }</div></div>
+        <div class="vs">vs</div>
+        <div class="mini"><div class="h">B · Cierre (lab 10)</div>Elemento vertical más alto que la banda, aplicado solo en filas de busbar. Corregir: la banda debe ser fina y de todo el ancho.
+          <div class="formula">Iₙ • E = (Iₙ ⊕ E) ⊖ E</div></div>
+      </div>
+      <table class="crit" style="margin-bottom:3mm">
+        <tr><th>#</th><th>Criterio, fijado antes de medir</th><th>Semana</th></tr>
+        <tr><td>1</td><td>Brillo residual en las filas del busbar, respecto a sus vecinas · apoyo</td><td class="w">S2</td></tr>
+        <tr><td>2</td><td>Cambio introducido fuera de esas filas · apoyo</td><td class="w">S2</td></tr>
+        <tr><td>3</td><td><b>AUC de la CNN entrenada con cada alternativa · decide</b></td><td class="w">S3</td></tr>
+        <tr><td>4</td><td>Tiempo de cómputo por celda · apoyo</td><td class="w">S2</td></tr>
+      </table>
+      <div class="blocks2">
+        <div class="mini"><div class="h">Ojo: grietas verticales finas</div>Una grieta vertical fina mide lo mismo que un dedo y el cierre horizontal no las distingue. Se compara la respuesta de crestas <b>antes y después</b> de quitar los dedos.</div>
+        <div class="mini"><div class="h">Se muestra</div><span class="chip">b1 espectro + H</span><span class="chip">b2 A / A-filas / B</span><span class="chip">b3 perfil por fila</span><span class="chip">b4 dedos y grietas</span><br>Tabla de criterios por alternativa, mono y poly.</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Hoja de ruta · Celdas EL</span><span>5</span></div>
+</section>
+
+<!-- =============================================================== 6 · SEMANA 3 -->
+<section class="page">
+  <div class="kicker">04 · Semana a semana</div>
+  <div class="week" style="flex:1; margin-top:2mm">
+    <div class="top"><span class="big">3</span><div><div class="tt">Mapas, CNN y congelación del sistema</div><div class="dt">23 – 29 nov · cierra con el Avance 3: después de esta semana no se cambia nada</div></div></div>
+    <div class="q">¿Cuánto le aporta el preprocesamiento a la CNN, y qué alternativa gana: A o B?</div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 5mm; flex:1">
+      <div>
+        <h3>Los mapas</h3>
+        <div class="mini" style="margin-bottom:2.5mm"><div class="h">Grietas</div>Filtro de crestas de Sato a escalas finas. En poly, si responde a los granos: banco de Gabor y filtrado por orientación y longitud.</div>
+        <div class="mini" style="margin-bottom:2.5mm"><div class="h">Zonas apagadas</div>Déficit de brillo frente a la celda sana suavizada:
+          <div class="formula">D = máx(0, 1 − S / m)</div></div>
+        <div class="mini" style="margin-bottom:2.5mm"><div class="h">Medidas</div>Componentes conexas: % de área apagada, longitud y orientación. Se descartan los restos de busbar y los granos.</div>
+        <div class="mini" style="border-color:var(--ud)"><div class="h">Apoyo visual, no se mide</div>ELPV solo trae una etiqueta por celda y no dice dónde está el defecto. Los mapas son <b>entrada de la red</b> y <b>apoyo visual</b>; la propuesta deja fuera evaluarlos con métricas (§7.3).</div>
+      </div>
+
+      <div>
+        <h3>La CNN</h3>
+        <div class="mini" style="margin-bottom:3mm">
+          <div class="h">Entrada · 3 canales · 128 × 128</div>
+          <div class="chan"><div class="ly">celda limpia</div><div class="ly">mapa de déficit</div><div class="ly">mapa de crestas</div></div>
+          Predice la probabilidad de defecto; ≥ 50 % es defectuosa.
+        </div>
+        <div class="mini" style="margin-bottom:3mm"><div class="h">Reglas de entrenamiento</div>
+          Pesos por clase, porque el desbalance es 69 / 31.<br>
+          Volteos y traslaciones pequeñas, solo en entrenamiento.<br>
+          <b>Sin rotaciones de 90°</b>: los busbars siempre son horizontales.<br>
+          Plantilla lista en <code>scripts/04_entrenar_cnn.py</code>.
+        </div>
+        <div class="h" style="font-size:7.3pt;letter-spacing:.12em;text-transform:uppercase;color:var(--ud2);font-weight:600;margin-bottom:1.5mm">Matriz de experimentos · 9 entrenamientos</div>
+        <div class="exp">
+          <div class="h"></div><div class="h">semilla 1</div><div class="h">semilla 2</div><div class="h">semilla 3</div>
+          <div class="r">A · notch</div><div class="c">A-1</div><div class="c">A-2</div><div class="c">A-3</div>
+          <div class="r">B · cierre</div><div class="c">B-1</div><div class="c">B-2</div><div class="c">B-3</div>
+          <div class="r">Original</div><div class="c">O-1</div><div class="c">O-2</div><div class="c">O-3</div>
+        </div>
+        <div class="cap">"Original" es la misma red sobre la imagen sin procesar. Mide cuánto aporta el procesamiento, que es el objetivo específico 4.</div>
+      </div>
+
+      <div style="display:flex; flex-direction:column">
+        <h3>La decisión</h3>
+        <div class="mini" style="margin-bottom:3mm"><b>Decide el criterio 3</b>: el AUC de la CNN en validación con A y con B. Los criterios 1, 2 y 4 de la semana 2 son de apoyo. Se deja escrito por qué.</div>
+        <div class="lock" style="background:var(--ud)">
+          <svg width="22" height="26" viewBox="0 0 22 26"><rect x="1" y="11" width="20" height="14" rx="2" fill="#fff"/><path d="M5 11V7a6 6 0 0 1 12 0v4" stroke="#fff" stroke-width="2.4" fill="none"/></svg>
+          <div><div class="t">Sistema congelado</div><div class="d">Etiqueta git <code style="background:rgba(255,255,255,.18);color:#fff">sistema-congelado</code>. Desde aquí no se ajusta ningún parámetro.</div></div>
+        </div>
+        <div class="mini" style="margin-bottom:3mm"><div class="h">Se muestra</div><span class="chip">m1 mapas superpuestos</span><span class="chip">c1 curvas de entrenamiento</span><span class="chip">c2 ROC A / B / original</span><span class="chip">c3 tabla final</span></div>
+        <div class="mini" style="margin-bottom:3mm"><div class="h">Métricas · en validación</div>AUC, F1 de la clase defectuosa y exactitud balanceada, por <span style="color:var(--mono);font-weight:600">mono</span> y <span style="color:var(--poly);font-weight:600">poly</span>, con media ± desviación de las 3 semillas.</div>
+        <div class="mini" style="border-color:var(--ud)"><div class="h">Mensaje del avance</div>"El preprocesamiento aporta X puntos de AUC; elegimos esta alternativa por estas razones y congelamos."</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Hoja de ruta · Celdas EL</span><span>6</span></div>
+</section>
+
+<!-- =============================================================== 7 · SEMANAS 4 Y 5 -->
+<section class="page">
+  <div class="kicker">04 · Semana a semana</div>
+  <div class="wk2" style="margin-top:2mm">
+    <div class="week">
+      <div class="top"><span class="big">4</span><div><div class="tt">Prueba, errores y demo</div><div class="dt">30 nov – 6 dic · cierra con el Avance 4</div></div></div>
+      <div class="q">¿Cuánto acierta en paneles que nunca vio?</div>
+      <div class="lock">
+        <svg width="22" height="26" viewBox="0 0 22 26"><rect x="1" y="11" width="20" height="14" rx="2" fill="#fff"/><path d="M5 11V7a6 6 0 0 1 12 0v4" stroke="#fff" stroke-width="2.4" fill="none"/></svg>
+        <div><div class="t">Prueba: 7 paneles, 402 celdas, una sola corrida</div><div class="d">Hasta esta semana nadie carga <code style="background:rgba(255,255,255,.15);color:#fff">split == "test"</code>. Si se corre dos veces, deja de ser una medición honesta.</div></div>
+      </div>
+      <ul class="tasks">
+        <li><span class="st no"></span>Matriz de confusión, AUC, F1 de la clase defectuosa y exactitud balanceada, por mono y poly</li>
+        <li><span class="st no"></span>Galería de falsos positivos y falsos negativos con su mapa: ¿qué etapa falla en cada uno?</li>
+        <li><span class="st no"></span><b>Demo</b> (Gradio o Streamlit): recibe una celda y su tipo y muestra etapas, mapa, medidas y veredicto, con celdas de los paneles de prueba</li>
+      </ul>
+      <div class="mini">
+        <div class="h">Boceto de la demo</div>
+        <div class="demo">
+          <div><div class="lbl">Entrada · mono</div><img src="img/celda_grieta.png" alt=""></div>
+          <div><div class="lbl">Etapas</div><div class="tiles"><div>máscara</div><div>sin busbars ni dedos</div><div>crestas</div><div>déficit</div></div></div>
+          <div class="res"><div class="lbl">Resultado</div><div class="v">DEFECTUOSA</div>p = 0,__<br>Área apagada: __ %<br>Grietas: __ px<br><span class="muted">+ mapa superpuesto</span></div>
+        </div>
+      </div>
+      <div class="blocks2">
+        <div class="mini"><div class="h">Si sobra tiempo</div>Los cuatro niveles de etiqueta (0 / 33 / 67 / 100 %) · resumen por panel · inferencia en la tarjeta Hailo.</div>
+        <div class="mini"><div class="h">Se muestra</div><span class="chip">t1 confusión</span><span class="chip">t2 ROC</span><span class="chip">t3 errores</span><span class="chip">demo</span></div>
+      </div>
+    </div>
+
+    <div class="week">
+      <div class="top"><span class="big">5</span><div><div class="tt">Cierre y sustentación</div><div class="dt">7 – 13 dic</div></div></div>
+      <div class="q">¿Lo sabemos contar y otro lo puede reproducir?</div>
+      <ul class="tasks">
+        <li><span class="st no"></span><b>Informe final</b>: une las secciones de los cuatro avances, que ya están escritas</li>
+        <li><span class="st no"></span><b>Presentación final</b>, con la demo en vivo y un <b>video de respaldo</b></li>
+        <li><span class="st no"></span>Reproducibilidad: clon limpio y README de principio a fin en otra máquina</li>
+        <li><span class="st no"></span>Ensayo cronometrado, con preguntas difíciles de un compañero</li>
+      </ul>
+      <div class="mini" style="margin-bottom:3mm"><div class="h">Limitaciones que se dicen sin esconder</div>
+        El mapa no se valida con métricas · 44 paneles de una sola cámara · ELPV solo trae una etiqueta por celda y no dice dónde está el defecto · no hay mediciones eléctricas: la referencia es el criterio del experto.
+      </div>
+      <div class="mini" style="border-color:var(--ud)"><div class="h">Por qué la semana 5 es corta en trabajo</div>
+        Si cada avance se hizo bien, el informe final es <b>unir y pulir</b>, no escribir desde cero. Por eso cada avance usa las mismas secciones.
+      </div>
+      <div class="mini" style="margin-top:3mm"><div class="h">Lo que se entrega al final · §7.1 de la propuesta</div>
+        <table class="crit">
+          <tr><td>1</td><td><b>Aplicación</b>: recibe una celda con su tipo y muestra veredicto, etapas y mapa. En la demo, celdas de los paneles de prueba</td></tr>
+          <tr><td>2</td><td><b>Código reproducible</b> en GitHub, con la etiqueta <code>v1.0</code></td></tr>
+          <tr><td>3</td><td><b>Informe breve y sustentación</b></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Hoja de ruta · Celdas EL</span><span>7</span></div>
+</section>
+
+<!-- =============================================================== 8 · CÓMO TRABAJAMOS -->
+<section class="page">
+  <div class="head">
+    <div>
+      <div class="kicker">05 · Cómo trabajamos</div>
+      <h2>Un avance es un paquete, siempre igual</h2>
+    </div>
+    <img src="img/logo.png" alt="">
+  </div>
+
+  <h3 style="margin-bottom:1.5mm">Cuando se pide un avance</h3>
+  <div class="flow" style="margin-bottom:5mm">
+    <div class="step"><div class="n">1</div><div class="t">Corte</div><div class="d">Merge a <code>main</code> de lo que corre. Se regeneran figuras y métricas <b>desde los scripts</b>.</div></div>
+    <div class="step"><div class="n">2</div><div class="t">Etiqueta</div><div class="d"><code>git tag avance-N</code>: cualquiera puede reproducir lo que se mostró.</div></div>
+    <div class="step"><div class="n">3</div><div class="t">Redacción</div><div class="d">El editor de esa semana arma el informe (4–6 págs.) y la presentación Beamer (8–12 diapositivas).</div></div>
+    <div class="step"><div class="n">4</div><div class="t">Revisión</div><div class="d">Los otros dos leen y se ensaya una vez, unos 10 min.</div></div>
+  </div>
+
+  <h3 style="margin-bottom:1.5mm">Las 7 secciones del informe y de la presentación</h3>
+  <div class="sec7" style="margin-bottom:5mm">
+    <div><b>1</b>Resumen: qué se hizo, el número clave y la decisión</div>
+    <div><b>2</b>Avance frente al cronograma</div>
+    <div><b>3</b>Métodos: ecuaciones y parámetros</div>
+    <div><b>4</b>Resultados en validación, mono y poly</div>
+    <div><b>5</b>Decisiones y cambios, con su razón</div>
+    <div><b>6</b>Problemas y riesgos</div>
+    <div><b>7</b>Plan de la semana siguiente</div>
+  </div>
+
+  <div class="rules">
+    <div class="mini">
+      <div class="h">Reglas del repo</div>
+      · Ninguna figura se hace a mano: todo sale de <code>scripts/</code><br>
+      · Prefijos: <code>e</code> EDA · <code>p</code> partición · <code>f</code> pipeline · <code>n</code> normalización · <code>b</code> busbars · <code>m</code> mapas · <code>c</code> CNN · <code>t</code> prueba<br>
+      · Una rama por tarea; <code>main</code> siempre corre<br>
+      · Si un cambio altera <code>data/particion.csv</code>, no se sube<br>
+      · <b>Prueba cerrada hasta la semana 4</b>
+    </div>
+    <div class="mini">
+      <div class="h">Quién lleva qué · por definir entre los tres</div>
+      <table class="roles">
+        <tr><td>Preprocesamiento y busbars (S1–S2)</td><td class="who">nombre</td></tr>
+        <tr><td>Mapas de grietas y zonas apagadas (S3)</td><td class="who">nombre</td></tr>
+        <tr><td>CNN, GPU, prueba y demo (S3–S4)</td><td class="who">nombre</td></tr>
+        <tr><td>Editor del avance: rota cada semana</td><td class="who">S1 · S2 · S3 · S4</td></tr>
+      </table>
+    </div>
+    <div class="mini">
+      <div class="h">Riesgos y plan B</div>
+      <b>Los granos de poly ensucian el mapa</b> → Gabor y filtrado por orientación; reportar mono y poly por separado.<br>
+      <b>El brillo crudo es un atajo del panel</b> → la CNN solo ve imágenes normalizadas.<br>
+      <b>La CNN no supera la línea base</b> → es un resultado válido y se reporta.<br>
+      <b>El cierre de dedos borra grietas verticales</b> → revisión antes y después.
+    </div>
+  </div>
+
+  <div class="foot"><span>Hoja de ruta · Celdas EL · detalle en <code>docs/plan_semanal.md</code></span><span>8</span></div>
+</section>
+
+</body>
+</html>

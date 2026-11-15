@@ -23,3 +23,16 @@ Thumbs.db
 desktop.ini
 .vscode/
 .idea/
+
+# LaTeX (los PDF de entregas/ sí se versionan)
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.xdv
+*.synctex.gz

@@ -53,8 +53,13 @@ def busbar_rows(img, mask):
         rows[max(0, lo - 3):hi + 4] = True
     return rows, peaks
 
-def image_mask(img, template):
-    """Máscara propia de la celda: región brillante -> envolvente convexa -> erosión; AND con la plantilla del tipo."""
+def image_mask(img, template, respaldo=True):
+    """Máscara propia de la celda: región brillante -> envolvente convexa -> erosión; AND con la plantilla del tipo.
+
+    respaldo (v1, semana 1): si la máscara por brillo cubre menos del 90 % de la plantilla, la celda tiene zonas
+    apagadas tan grandes que el umbral las deja fuera (17 celdas en train+val, todas defectuosas). Como ELPV ya
+    trae las celdas recortadas y alineadas, en ese caso se usa la plantilla geométrica del tipo.
+    """
     f = cv2.GaussianBlur(img.astype(np.float32), (0, 0), 3)
     thr = 0.5 * np.percentile(f, 90)
     b = (f > thr).astype(np.uint8)
@@ -66,7 +71,10 @@ def image_mask(img, template):
     hm = np.zeros_like(b); cv2.fillConvexPoly(hm, hull, 1)
     hm = cv2.erode(hm, np.ones((17, 17), np.uint8)).astype(bool)
     # esquinas achaflanadas (mono): recortar con la plantilla erosionada solo en las esquinas
-    return hm & template
+    m = hm & template
+    if respaldo and m.sum() < 0.9 * template.sum():
+        return template.copy()
+    return m
 
 def preprocess(img, mask):
     f = img.astype(np.float32)

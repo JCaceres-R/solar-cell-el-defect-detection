@@ -6,7 +6,7 @@ Uso:   python scripts/02_evaluar_caracteristicas.py      (requiere 01_preprocesa
 - Regresión logística entrenada en train y medida en VALIDACIÓN.
 - PRUEBA NO SE USA AQUÍ: se reserva para la evaluación final del proyecto (ver docs/03_particion.md).
 
-Salidas: reports/metricas/caracteristicas.json, reports/figures/f1_auc_caracteristicas.png
+Salidas: reports/metricas/caracteristicas.json, reports/figures/f1_auc_caracteristicas.png, reports/figures/f4_linea_base_val.png
 """
 import json
 import os
@@ -64,6 +64,54 @@ res = {"auc_por_caracteristica_train": A.round(3).to_dict(),
                          "exactitud_mono": float((yh == yv)[va.tipo.values == "mono"].mean()),
                          "exactitud_poly": float((yh == yv)[va.tipo.values == "poly"].mean()),
                          "matriz_confusion": confusion_matrix(yv, yh).tolist()}}
+
+
+# 3. las mismas métricas por tipo de celda (la propuesta pide reportar mono y poly por separado)
+def met(y, p):
+    h = (p > .5).astype(int)
+    return {"n": int(len(y)), "n_defectuosas": int(y.sum()), "auc": roc_auc_score(y, p),
+            "exactitud": float((h == y).mean()), "exactitud_balanceada": balanced_accuracy_score(y, h),
+            "f1_defectuosa": f1_score(y, h), "matriz_confusion": confusion_matrix(y, h, labels=[0, 1]).tolist()}
+
+
+tv = va.tipo.values
+res["logistica_val_por_tipo"] = {t: met(yv[tv == t], pv[tv == t]) for t in ["mono", "poly"]}
+res["logistica_val_por_tipo"]["todas"] = met(yv, pv)
+
+# 4. la misma logística SIN el brillo crudo (brillo_ref): el brillo crudo arrastra la exposición del panel
+#    (ver scripts/05_medir_mascara_normalizacion.py), así que se reporta también sin él
+F2 = [f for f in FEAT if f != "brillo_ref"]
+def X2(S):
+    x = S[F2 + ["n_busbars"]].copy(); x["poly"] = (S.tipo == "poly").astype(int); return x
+clf2 = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000, class_weight="balanced")).fit(X2(tr), tr.defectuosa)
+pv2 = clf2.predict_proba(X2(va))[:, 1]
+res["logistica_val_sin_brillo_crudo"] = {t: met(yv[tv == t], pv2[tv == t]) for t in ["mono", "poly"]}
+res["logistica_val_sin_brillo_crudo"]["todas"] = met(yv, pv2)
+
+from sklearn.metrics import roc_curve
+fig, axs = plt.subplots(1, 3, figsize=(10.5, 3.3), gridspec_kw={"width_ratios": [1.25, 1, 1]})
+for t in ["mono", "poly"]:
+    fp, tp_, _ = roc_curve(yv[tv == t], pv[tv == t])
+    axs[0].plot(fp, tp_, color=COL_TIPO[t], lw=1.8, label=f"{NOMBRE_TIPO[t]} · AUC {res['logistica_val_por_tipo'][t]['auc']:.2f}")
+axs[0].plot([0, 1], [0, 1], color=TINTA2, lw=.8, ls="--")
+axs[0].set_xlabel("falsos positivos (funcionales marcadas)"); axs[0].set_ylabel("verdaderos positivos (defectuosas halladas)")
+axs[0].legend(frameon=False, loc="lower right"); axs[0].set_title("Curva ROC en validación", loc="left")
+axs[0].set_aspect("equal")
+for ax, t in zip(axs[1:], ["mono", "poly"]):
+    cm = np.array(res["logistica_val_por_tipo"][t]["matriz_confusion"])
+    ax.imshow(cm / cm.sum(1, keepdims=True), cmap="Blues" if t == "mono" else "Oranges", vmin=0, vmax=1)
+    for i in range(2):
+        for j in range(2):
+            fr = cm[i, j] / cm[i].sum()
+            ax.text(j, i, f"{cm[i, j]}\n{fr:.0%}", ha="center", va="center", fontsize=9.5, color="white" if fr > .55 else "black")
+    ax.set_xticks([0, 1], ["funcional", "defectuosa"]); ax.set_yticks([0, 1], ["funcional", "defectuosa"])
+    ax.set_xlabel("predicha"); ax.set_ylabel("real" if t == "mono" else "")
+    r = res["logistica_val_por_tipo"][t]
+    ax.set_title(f"{NOMBRE_TIPO[t]} · exact. bal. {r['exactitud_balanceada']:.0%}", loc="left")
+    for s in ax.spines.values(): s.set_visible(False)
+fig.subplots_adjust(wspace=0.55)
+guardar(fig, os.path.join(RAIZ, "reports", "figures", "f4_linea_base_val.png"))
+
 va.assign(prob_logistica=pv)[["idx", "tipo", "prob", "defectuosa", "prob_logistica"]].to_csv(
     os.path.join(RAIZ, "data", "interim", "pred_logistica_val.csv"), index=False)
 json.dump(res, open(os.path.join(MET, "caracteristicas.json"), "w"), indent=1, default=float)
