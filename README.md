@@ -22,7 +22,7 @@ El procesamiento de imagen hace el trabajo pesado; la red es la última etapa. D
 |---|---|
 | F0 · Repositorio, entorno, dataset | ✅ |
 | F1 · EDA y partición train/val/test por panel | ✅ congelada en `data/particion.csv` |
-| F2 · Preprocesamiento (máscara, normalización, busbars, dedos) | 🟡 máscara v1 y normalización medidas (semana 1); busbars y dedos en la semana 2 |
+| F2 · Preprocesamiento (máscara, normalización, busbars, dedos) | 🟡 máscara v1 y normalización (semana 1); busbars y dedos medidos (semana 2, [`entregas/avance_2/`](entregas/avance_2/)); notch o cierre se decide en la semana 3 |
 | F3 · Mapa de defectos + características | 🟡 línea base medida en validación: AUC 0,78 (mono 0,84 · poly 0,71) |
 | F4 · CNN | ⬜ plantilla lista (`scripts/04_entrenar_cnn.py`); GPU probada (GTX 1650, ~7 s/época) |
 | F5 · Evaluación en test, errores, informe, demo | ⬜ |

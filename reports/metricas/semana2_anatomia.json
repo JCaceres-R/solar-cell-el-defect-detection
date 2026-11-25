@@ -1,0 +1,56 @@
+{
+  "celda_923_busbars": {
+    "reales": [
+      52,
+      150,
+      249
+    ],
+    "falsos_detectados_v1": [
+      284
+    ]
+  },
+  "celda_923_paso_dedos_px": 3.7,
+  "celda_923_contraste_dedos_pct": 1.28,
+  "celda_15_busbars": {
+    "reales": [
+      51,
+      149,
+      248
+    ],
+    "falsos_detectados_v1": [
+      15
+    ]
+  },
+  "celda_6_busbars": {
+    "reales": [
+      51,
+      150,
+      249
+    ],
+    "falsos_detectados_v1": [
+      117
+    ]
+  },
+  "celda_282_busbars": {
+    "reales": [
+      80,
+      223
+    ],
+    "falsos_detectados_v1": []
+  },
+  "celda_2371_busbars": {
+    "reales": [
+      51,
+      150,
+      249
+    ],
+    "falsos_detectados_v1": [
+      15,
+      284
+    ]
+  },
+  "celda_923_px_marcados_con_rejilla": 4568,
+  "celda_923_px_marcados_sin_rejilla": 0,
+  "celda_15_px_marcados_con_rejilla": 6819,
+  "celda_15_px_marcados_sin_rejilla": 1088
+}

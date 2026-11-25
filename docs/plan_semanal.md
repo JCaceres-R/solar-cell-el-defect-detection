@@ -64,7 +64,9 @@ Base: el informe de propuesta aprobado, [`Informe_Propuesta_Celdas_EL.pdf`](../I
 
 Detalle en [`entregas/avance_1/`](../entregas/avance_1/).
 
-### Semana 2 · Busbars → Avance 2
+### Semana 2 · Busbars → Avance 2 🟡
+
+Detalle en [`entregas/avance_2/`](../entregas/avance_2/). Pendiente para la semana 3: el criterio 3 (AUC de la CNN) y confirmar que no conviene quitar los dedos. Falta la lectura cruzada, el ensayo y la etiqueta `avance-2`.
 
 | Actividad | Detalle |
 |---|---|
