@@ -36,3 +36,7 @@ desktop.ini
 *.vrb
 *.xdv
 *.synctex.gz
+
+# VM Linux (scripts/vm/run_cnn_vm.sh): su entorno no se versiona; los pesos del sistema elegido sí (semana 4)
+.venv-linux/
+!modelos/cnn_v2/*.pt

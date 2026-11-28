@@ -85,7 +85,7 @@ Detalle en [`entregas/avance_2/`](../entregas/avance_2/). Pendiente para la sema
 |---|---|
 | Mapa de grietas | Sato a escalas finas (ec. 4); en poly, si responde a los granos, Gabor y filtrado por orientación y longitud |
 | Mapa de zonas apagadas | Déficit D (ec. 5) y umbral → área apagada |
-| **CNN** | 3 canales a 128 × 128 (Ic, D, crestas), pesos por clase, sin rotaciones de 90°. Con **A**, con **B** y con la **imagen original**, 3 semillas cada una |
+| **CNN** | 3 canales a 128 × 128 (Ic, D, crestas), pesos por clase, sin rotaciones de 90°. Con **A**, con **B** y con la **imagen original**. Cambio del 27-nov: red v2 más densa (1,9 M de parámetros) y **5 semillas** cada una, entrenada en la VM ([`ENTRENAR_CNN_EN_VM.md`](ENTRENAR_CNN_EN_VM.md)) |
 | **Decisión** | **Criterio 3: AUC de la CNN en validación** decide entre A y B → **sistema congelado** (`sistema-congelado`) |
 
 **Figuras:** `m1` mapas superpuestos (apoyo visual) · `c1` curvas de entrenamiento · `c2` ROC en validación A / B / original · `c3` tabla de los 4 criterios.

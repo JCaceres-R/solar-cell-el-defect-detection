@@ -1,0 +1,15 @@
+# Entorno de la VM Linux (Ubuntu 22.04, Python 3.10, solo CPU) para entrenar la CNN de la semana 3.
+# requirements.txt tiene las versiones de Windows (Python 3.13/3.14), que no existen para Python 3.10.
+# Las de numpy, pandas, scipy, scikit-learn, joblib, matplotlib y pillow son las que ya funcionan en esa VM.
+# torch se instala aparte: pip install torch==2.13.0 --index-url https://download.pytorch.org/whl/cpu
+# Si alguna versión exacta falla, scripts/vm/run_cnn_vm.sh instala sin versiones y lo anota en el registro.
+elpv-dataset==1.0.0.post1
+numpy==2.2.6
+pandas==2.3.3
+pillow==12.3.0
+scipy==1.15.3
+opencv-python-headless==4.12.0.88
+scikit-image==0.25.2
+scikit-learn==1.7.2
+joblib==1.6.0
+matplotlib==3.10.9
